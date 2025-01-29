@@ -2,23 +2,7 @@ import pybullet as p
 import pybullet_data
 import time
 import os
-
-class PIDController:
-    def __init__(self, kp, ki, kd):
-        self.kp = kp
-        self.ki = ki
-        self.kd = kd
-
-        self.prev_error = 0
-        self.integral = 0
-
-    def compute(self, setPoint, measuredValue, dt):
-        error = setPoint - measuredValue
-        self.integral += error * dt
-        derivative = (error - self.prev_error) / dt
-        self.prev_error = error
-
-        return (self.kp * error) + (self.ki *self.integral) + (self.kd * derivative)
+import pid_controller
 
 # Initialise physics simulation.
 physicsClient = p.connect(p.GUI) # GUI mode for visualisation.
@@ -36,20 +20,7 @@ startOrientation = p.getQuaternionFromEuler([0, 0, 0]) # No rotation.
 # Load UAV model.
 uavId = p.loadURDF(uavPath, startPos, startOrientation) # Temporary UAV model.
 
-# Keyboard Input.
-# def get_keyboard_control():
-#     keys = p.getKeyboardEvents()
-#     thrust = 0
-
-#     # Control thrusts with up and down arrow keys.
-#     if p.B3G_UP_ARROW in keys and keys[p.B3G_UP_ARROW]:
-#         thrust = 5
-#     elif p.B3G_DOWN_ARROW in keys and keys[p.B3G_DOWN_ARROW]:
-#         thrust = -5
-
-#     return thrust
-
-pidAltitude = PIDController(1.5, 0.02, 0.1)
+pidAltitude = pid_controller.PIDController(1.5, 0.02, 0.1)
 targetAltitude = 2.0 # Desired Altitude.
 # Simulation loop.
 while True:
